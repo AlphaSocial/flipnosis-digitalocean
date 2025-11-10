@@ -61,7 +61,7 @@ export function updateClientFromServerState(state, dependencies) {
     if (existingIndicator) {
       existingIndicator.remove();
     }
-    console.log(`GAME: Game is now round_active - Round ${state.currentRound}`);
+    // Only log when round actually starts, not on every state update
     updatePlayerCardButtons();
   } else if (state.phase === 'game_over') {
     console.log(`GAME_OVER: GAME OVER DETECTED!`, {
@@ -156,13 +156,11 @@ export function updateClientFromServerState(state, dependencies) {
           if (serverPlayer.choice !== undefined && serverPlayer.choice !== null) {
             // Server has a valid choice - sync it if different
             if (serverPlayer.choice !== localPlayer.choice) {
-              console.log(`SYNC: Syncing player ${serverPlayer.slotNumber + 1} choice: ${serverPlayer.choice} (was: ${localPlayer.choice || 'null'})`);
               localPlayer.choice = serverPlayer.choice;
             }
           } else if (localPlayer.choice && serverPlayer.choice === null) {
             // Server sent null - this happens on new rounds when choices are reset
             // CLEAR the local choice so player can choose again
-            console.log(`CLEAR: Server sent null choice for player ${serverPlayer.slotNumber + 1} - clearing local choice (was: ${localPlayer.choice})`);
             localPlayer.choice = null;
           }
 
@@ -243,7 +241,6 @@ export function updateClientFromServerState(state, dependencies) {
       players.forEach((player, i) => {
         if (player && !player.isEmpty) {
           player.choice = null;
-          console.log(`🔄 Cleared choice for player ${i + 1}`);
         }
       });
       
@@ -366,7 +363,6 @@ export function updateClientFromServerState(state, dependencies) {
               // This is the critical fix for Round 2 bug
               if (currentPlayerSlot >= 0 && currentPlayerSlot === i) {
                 choiceButtons.style.display = 'flex';
-                console.log(`✅ ENABLED choice buttons for player slot ${i} (current player)`);
 
                 const choiceBtnElements = tube.cardElement.querySelectorAll('.choice-btn');
                 choiceBtnElements.forEach(btn => {
@@ -378,7 +374,6 @@ export function updateClientFromServerState(state, dependencies) {
                 });
               } else {
                 choiceButtons.style.display = 'none';
-                console.log(`⏸️ HIDDEN choice buttons for player slot ${i} (not current player)`);
               }
             }
           }

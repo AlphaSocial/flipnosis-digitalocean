@@ -196,12 +196,11 @@ export function initializeSocket(dependencies) {
   socket.on('physics_state_update', (state) => {
     // Wrap everything in try-catch to prevent any errors from blocking state updates
     try {
-      console.log('STATE: Received physics state update:', {
-        phase: state?.phase,
-        currentRound: state?.currentRound,
-        roundTimer: state?.roundTimer,
-        players: state?.players ? Object.keys(state.players).length : 0
-      });
+      // Reduced logging - only log phase changes, not every state update
+      if (state?.phase && state.phase !== socket._lastPhase) {
+        console.log('STATE: Phase changed to:', state.phase, 'Round:', state.currentRound);
+        socket._lastPhase = state.phase;
+      }
       
       if (!state) {
         console.warn('WARN: Received null/undefined state update');
@@ -293,38 +292,35 @@ export function initializeSocket(dependencies) {
   });
 
   socket.on('physics_power_charging', (data) => {
-    console.log('POWER: Power charging:', data);
+    // Reduced logging - power updates are very frequent
     updatePowerChargingVisual(data);
   });
 
   socket.on('physics_power_charging_start', (data) => {
-    console.log('POWER_START: Received charging start:', data);
+    console.log('POWER_START: Player', data.playerSlot + 1, 'started charging');
     if (data.playerSlot >= 0 && data.playerSlot < 4) {
       const tube = tubes[data.playerSlot];
       if (tube) {
         tube.isFilling = true;
         tube.power = 0;
         tube.chargingStartTime = Date.now();
-        console.log(`🫧 Started pearl animation for tube ${data.playerSlot + 1}`);
-        
+
         if (tube.liquidParticleMeshes) {
           tube.liquidParticleMeshes.forEach(mesh => {
             mesh.visible = true;
           });
-          console.log(`🫧 Forced pearl visibility on charging start for tube ${data.playerSlot + 1}`);
         }
       }
     }
   });
 
   socket.on('physics_power_charging_stop', (data) => {
-    console.log('POWER_STOP: Received charging stop:', data);
+    console.log('POWER_STOP: Player', data.playerSlot + 1, 'stopped at', data.finalPower + '%');
     if (data.playerSlot >= 0 && data.playerSlot < 4) {
       const tube = tubes[data.playerSlot];
       if (tube) {
         tube.isFilling = false;
         tube.power = data.finalPower || tube.power;
-        console.log(`STOP: Stopped pearl animation for tube ${data.playerSlot + 1} at ${tube.power}%`);
       }
     }
   });

@@ -72,14 +72,14 @@ export async function initGame(params) {
       if (tube.cardElement) {
         const player = players[i];
         if (!player || player.isEmpty) return;
-        
+
         // Determine if this is the current player's slot
         const isCurrentPlayer = isServerSideMode ? (playerSlot === i) : true;
-        
+
         // Update choice buttons visibility
         const choiceButtons = tube.cardElement.querySelector('.choice-buttons');
         const choiceBadge = tube.cardElement.querySelector('.choice-badge');
-        
+
         if (isCurrentPlayer) {
           // Show choice buttons for current player only if they haven't made a choice yet
           if (player.choice) {
@@ -108,10 +108,10 @@ export async function initGame(params) {
           if (choiceButtons) choiceButtons.style.display = 'none';
           if (choiceBadge) choiceBadge.style.display = 'none';
         }
-        
+
         // Update action buttons visibility
         const actionButtons = tube.cardElement.querySelectorAll('.action-btn');
-        
+
         if (isCurrentPlayer) {
           // Show action buttons for current player
           actionButtons.forEach(btn => {
@@ -124,7 +124,6 @@ export async function initGame(params) {
         }
       }
     });
-    console.log('🔄 Updated player card buttons');
   };
   
   const showChoiceRequiredMessage = (slot) => {
@@ -714,8 +713,6 @@ export async function initGame(params) {
         
         container.appendChild(box);
       }
-      
-      console.log(`📱 Mobile player boxes created: ${container.children.length} boxes`);
     },
     startClientCoinFlipAnimation,
     showCoinFlipResult,

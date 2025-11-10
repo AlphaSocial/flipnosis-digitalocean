@@ -17,24 +17,16 @@ export function updatePowerChargingVisual(data, tubes, updatePearlColorsFunc) {
     tube.power = data.power;
     tube.powerLevel = data.powerLevel || Math.min(5, Math.max(1, Math.ceil(data.power / 20)));
     tube.isFilling = data.isFilling;
-    
+
     const powerPercent = tube.power / 100;
     tube.foamIntensity = powerPercent;
-    
-    console.log(`⚡ Updated power visual for player ${data.playerSlot + 1}: ${data.power}% (level ${tube.powerLevel}, foamIntensity: ${tube.foamIntensity}, isFilling: ${tube.isFilling})`);
-    
+
     updatePearlColorsFunc(tube, powerPercent, data.playerSlot);
-    
-    if (tube.liquidParticleMeshes && tube.liquidParticleMeshes.length > 0) {
-      const visibleCount = tube.liquidParticleMeshes.filter(mesh => mesh.visible).length;
-      console.log(`🔍 Tube ${data.playerSlot + 1} has ${tube.liquidParticleMeshes.length} pearls, ${visibleCount} visible`);
-    }
-    
+
     if (tube.isFilling && tube.liquidParticleMeshes) {
       tube.liquidParticleMeshes.forEach(mesh => {
         mesh.visible = true;
       });
-      console.log(`🫧 Forced pearl visibility for tube ${data.playerSlot + 1}`);
     }
   }
 }
